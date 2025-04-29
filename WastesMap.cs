@@ -31,6 +31,7 @@ namespace TheWastes
         GameObject arena_Floor = new GameObject();
         GameObject islands = new GameObject();
         GameObject kill_Vis = new GameObject();
+        Material skybox = new Material(Shader.FindBuiltin("Skybox/Procedural"));
 
         public override void OnMapCreation()
         {
@@ -48,14 +49,20 @@ namespace TheWastes
             groundCollider.isMainGroundCollider = true;
             groundCollider.collider = arena_Floor.GetComponent<MeshCollider>();
 
-            // Spawn Locations
+            // Assign SkyBox 
+            skybox = bundle.LoadAsset<Material>("Desert_Sky");
+        }
+
+        public override void OnMapMatchLoad(bool amHost)
+        {
+            // Set Spawn Locations
             HostPedestal.SetFirstSequence(spawn.transform.GetChild(0).position);
             HostPedestal.SetSecondSequence(spawn.transform.GetChild(1).position);
             ClientPedestal.SetFirstSequence(spawn.transform.GetChild(2).position);
             ClientPedestal.SetSecondSequence(spawn.transform.GetChild(3).position);
 
-            // Load and assign SkyBox
-            RenderSettings.skybox = bundle.LoadAsset<Material>("Desert_Sky");
+            // Assign SkyBox
+            RenderSettings.skybox = skybox;
         }
         public Il2CppAssetBundle LoadBundle(string path)
         {
