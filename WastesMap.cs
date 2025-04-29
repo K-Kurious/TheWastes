@@ -31,7 +31,7 @@ namespace TheWastes
         GameObject arena_Floor = new GameObject();
         GameObject islands = new GameObject();
         GameObject kill_Vis = new GameObject();
-        Material skybox = new Material(Shader.FindBuiltin("Skybox/Procedural"));
+        Material skybox = null;
 
         public override void OnMapCreation()
         {
@@ -55,11 +55,11 @@ namespace TheWastes
 
         public override void OnMapMatchLoad(bool amHost)
         {
-            // Set Spawn Locations
-            HostPedestal.SetFirstSequence(spawn.transform.GetChild(0).position);
-            HostPedestal.SetSecondSequence(spawn.transform.GetChild(1).position);
-            ClientPedestal.SetFirstSequence(spawn.transform.GetChild(2).position);
-            ClientPedestal.SetSecondSequence(spawn.transform.GetChild(3).position);
+            //// Set Spawn Locations
+            //HostPedestal.SetFirstSequence(spawn.transform.GetChild(0).position);
+            //HostPedestal.SetSecondSequence(spawn.transform.GetChild(1).position);
+            //ClientPedestal.SetFirstSequence(spawn.transform.GetChild(2).position);
+            //ClientPedestal.SetSecondSequence(spawn.transform.GetChild(3).position);
 
             // Assign SkyBox
             RenderSettings.skybox = skybox;
