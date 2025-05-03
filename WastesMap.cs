@@ -20,7 +20,7 @@ namespace TheWastes
         public const string Description = "A huge desolate Island";
         public const string Author = "SisterPankake";
         public const string Company = null;
-        public const string Version = "1.0.3";
+        public const string Version = "1.0.4";
         public const string DownloadLink = null;
     }
 
@@ -68,15 +68,18 @@ namespace TheWastes
         }
 
         public override void OnMapMatchLoad(bool amHost)
-        {           
+        {
 
             // Assign SkyBox
+            MelonLogger.Msg("Try with Just skybox = skybox");
             RenderSettings.skybox = skybox;
+            //RenderSettings.skybox.SetTexture(skybox.GetTexture());
             GameObject directionalLight = GameObject.Find("Directional Light");
             if(directionalLight != null)
             {
                 directionalLight.transform.position = sun.transform.position;
                 directionalLight.transform.rotation = sun.transform.rotation;
+                MelonLogger.Msg("Found Directional Light in scene");
             }
             else
             {
@@ -90,6 +93,12 @@ namespace TheWastes
 #pragma warning disable CS8600, CS8602 // Converting null literal or possible null value to non-nullable type.
             using (System.IO.Stream bundleStream = MelonAssembly.Assembly.GetManifestResourceStream(path))
             {
+                if (bundleStream == null)
+                {
+                    MelonLogger.Error("Failed to find resource stream!");
+                    return null;
+                }
+
                 byte[] bundleBytes = new byte[bundleStream.Length];
                 bundleStream.Read(bundleBytes, 0, bundleBytes.Length);
                 return Il2CppAssetBundleManager.LoadFromMemory(bundleBytes);
