@@ -29,10 +29,7 @@ namespace TheWastes
         public override void OnLateInitializeMelon() => Initialize(BuildInfo.Name, BuildInfo.Version, BuildInfo.Author);
 
         private GameObject arena = new GameObject();
-        private GameObject net = new GameObject();
         private GameObject spawn = new GameObject();
-        private GameObject arena_Floor = new GameObject();
-        private GameObject kill_Vis = new GameObject();
         private GameObject islands = new GameObject();
         private GameObject sun = new GameObject();
         private Material skybox = null;
@@ -46,11 +43,9 @@ namespace TheWastes
             // Load and assign Map and variables
             assetBundle = LoadBundle("TheWastes.Resources.wastes");
             arena = GameObject.Instantiate(assetBundle.LoadAsset<GameObject>("TheWastes"));
-            net = arena.transform.GetChild(0).gameObject;
-            spawn = arena.transform.GetChild(1).gameObject;
-            kill_Vis = arena.transform.GetChild(2).gameObject;
-            islands = arena.transform.GetChild(3).gameObject;
-            sun = arena.transform.GetChild(4).gameObject;
+            spawn = arena.transform.GetChild(0).gameObject;
+            islands = arena.transform.GetChild(1).gameObject;
+            sun = arena.transform.GetChild(2).gameObject;
             CombatFloorHolder = arena.transform.Find("Colliders/CombatFloor").gameObject;
             if (CombatFloorHolder == null)
             {
@@ -77,7 +72,6 @@ namespace TheWastes
             // Assign SkyBox
             MelonLogger.Msg("Try with Just skybox = skybox");
             RenderSettings.skybox = skybox;
-            //RenderSettings.skybox.SetTexture(skybox.GetTexture());
             GameObject directionalLight = GameObject.Find("Directional Light");
             if(directionalLight != null)
             {
@@ -89,6 +83,7 @@ namespace TheWastes
             {
                 MelonLogger.Error("Failed to find Directional Light in scene");
             }
+            DynamicGI.UpdateEnvironment();
 
         }
 
@@ -123,7 +118,7 @@ namespace TheWastes
                 MelonLogger.Msg($"Parent: {parent.name} has {parent.transform.childCount} children");
                 for (int i = 0; i <= parent.transform.childCount - 1; i++)
                 {
-                    MelonLogger.Msg("1");
+                    //MelonLogger.Msg("1");
                     switch (type)
                     {
                         case ObjectType.Wall:
@@ -131,13 +126,13 @@ namespace TheWastes
                             break;
 
                         case ObjectType.CombatFloor:
-                            MelonLogger.Msg("2");
+                            //MelonLogger.Msg("2");
                             parent.transform.GetChild(i).gameObject.layer = (int)ObjectType.CombatFloor;
-                            MelonLogger.Msg("3");
+                            //MelonLogger.Msg("3");
                             GroundCollider groundCollider = parent.transform.GetChild(i).gameObject.AddComponent<GroundCollider>();
-                            MelonLogger.Msg("4");
+                            //MelonLogger.Msg("4");
                             groundCollider.collider = parent.transform.GetChild(i).GetComponent<MeshCollider>();
-                            MelonLogger.Msg("5");
+                            //MelonLogger.Msg("5");
                             break;
 
                         case ObjectType.NonCombatFloor:
