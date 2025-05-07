@@ -20,7 +20,7 @@ namespace TheWastes
         public const string Description = "A huge desolate Island";
         public const string Author = "SisterPankake";
         public const string Company = null;
-        public const string Version = "1.0.4";
+        public const string Version = "1.0.5";
         public const string DownloadLink = null;
     }
 
@@ -32,44 +32,48 @@ namespace TheWastes
         private GameObject net = new GameObject();
         private GameObject spawn = new GameObject();
         private GameObject arena_Floor = new GameObject();
-        private GameObject islands = new GameObject();
         private GameObject kill_Vis = new GameObject();
+        private GameObject islands = new GameObject();
         private GameObject sun = new GameObject();
         private Material skybox = null;
         private bool wasLightmapChanged = false;
         private Texture2D lightmap = null;
         private Il2CppAssetBundle assetBundle = null;
+        private GameObject CombatFloorHolder = null;
 
         public override void OnMapCreation()
         {
-            // Load and assign Map
+            // Load and assign Map and variables
             assetBundle = LoadBundle("TheWastes.Resources.wastes");
             arena = GameObject.Instantiate(assetBundle.LoadAsset<GameObject>("TheWastes"));
             net = arena.transform.GetChild(0).gameObject;
             spawn = arena.transform.GetChild(1).gameObject;
-            arena_Floor = arena.transform.GetChild(2).gameObject;
+            kill_Vis = arena.transform.GetChild(2).gameObject;
             islands = arena.transform.GetChild(3).gameObject;
-            kill_Vis = arena.transform.GetChild(4).gameObject;
-            sun = arena.transform.GetChild(5).gameObject;
+            sun = arena.transform.GetChild(4).gameObject;
+            CombatFloorHolder = GameObject.Find("CombatFloor");
+            if (CombatFloorHolder == null)
+            {
+                MelonLogger.Error("Failed to find Combat Floor");
+            }
 
             arena.transform.SetParent(mapParent.transform);
-            GroundCollider groundCollider = arena_Floor.AddComponent<GroundCollider>();
-            groundCollider.isMainGroundCollider = true;
-            groundCollider.collider = arena_Floor.GetComponent<MeshCollider>();
 
             // Setup SkyBox variable
             skybox = assetBundle.LoadAsset<Material>("Desert_Sky");
 
-            //// Set Spawn Locations
+            // Set Spawn Locations
             HostPedestal.SetFirstSequence(spawn.transform.GetChild(0).position);
             HostPedestal.SetSecondSequence(spawn.transform.GetChild(1).position);
             ClientPedestal.SetFirstSequence(spawn.transform.GetChild(2).position);
             ClientPedestal.SetSecondSequence(spawn.transform.GetChild(3).position);
+
+            // Set Layers and GroundColliders 
+            SetupLayers(CombatFloorHolder, ObjectType.CombatFloor);
         }
 
         public override void OnMapMatchLoad(bool amHost)
         {
-
             // Assign SkyBox
             MelonLogger.Msg("Try with Just skybox = skybox");
             RenderSettings.skybox = skybox;
@@ -106,8 +110,44 @@ namespace TheWastes
 #pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
         }
 
+        private void SetupLayers(GameObject parent, ObjectType type)
+        {
+            if (parent == null)
+            {
+                MelonLogger.Error($"Passed a null parent: {parent.name}");
+                return;
+            }
+
+            if (parent.transform.childCount > 0)
+            {
+                MelonLogger.Msg($"Parent: {parent.name} has {parent.transform.childCount} children");
+                foreach (GameObject child in parent.transform)
+                {
+                    switch(type)
+                    {
+                        case ObjectType.Wall: 
+                            child.layer = (int)ObjectType.Wall;
+                            break;
+
+                        case ObjectType.CombatFloor: 
+                            child.layer = (int)ObjectType.CombatFloor;
+                            GroundCollider groundCollider = child.AddComponent<GroundCollider>();
+                            groundCollider.collider = (Collider)child.GetComponent<MeshCollider>(); 
+                            break;
+
+                        case ObjectType.NonCombatFloor:
+                            child.layer = (int)ObjectType.NonCombatFloor; 
+                            break;
+                    }
+                }
+            }
+            MelonLogger.Msg("Successfully setup layers");
+            return;
+        }
+
         // Code for loading custom lightmaps
         // STOLEN from Orangenal, slightly modified
+        // Not used for now
         private Texture2D LoadAsset()
         {
             if (assetBundle == null)
