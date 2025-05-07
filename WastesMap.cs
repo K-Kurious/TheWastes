@@ -51,7 +51,7 @@ namespace TheWastes
             kill_Vis = arena.transform.GetChild(2).gameObject;
             islands = arena.transform.GetChild(3).gameObject;
             sun = arena.transform.GetChild(4).gameObject;
-            CombatFloorHolder = GameObject.Find("CombatFloor");
+            CombatFloorHolder = arena.transform.Find("Colliders/CombatFloor").gameObject;
             if (CombatFloorHolder == null)
             {
                 MelonLogger.Error("Failed to find Combat Floor");
