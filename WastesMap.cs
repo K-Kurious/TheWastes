@@ -121,22 +121,27 @@ namespace TheWastes
             if (parent.transform.childCount > 0)
             {
                 MelonLogger.Msg($"Parent: {parent.name} has {parent.transform.childCount} children");
-                foreach (GameObject child in parent.transform)
+                for (int i = 0; i <= parent.transform.childCount - 1; i++)
                 {
-                    switch(type)
+                    MelonLogger.Msg("1");
+                    switch (type)
                     {
-                        case ObjectType.Wall: 
-                            child.layer = (int)ObjectType.Wall;
+                        case ObjectType.Wall:
+                            parent.transform.GetChild(i).gameObject.layer = (int)ObjectType.Wall;
                             break;
 
-                        case ObjectType.CombatFloor: 
-                            child.layer = (int)ObjectType.CombatFloor;
-                            GroundCollider groundCollider = child.AddComponent<GroundCollider>();
-                            groundCollider.collider = (Collider)child.GetComponent<MeshCollider>(); 
+                        case ObjectType.CombatFloor:
+                            MelonLogger.Msg("2");
+                            parent.transform.GetChild(i).gameObject.layer = (int)ObjectType.CombatFloor;
+                            MelonLogger.Msg("3");
+                            GroundCollider groundCollider = parent.transform.GetChild(i).gameObject.AddComponent<GroundCollider>();
+                            MelonLogger.Msg("4");
+                            groundCollider.collider = parent.transform.GetChild(i).GetComponent<MeshCollider>();
+                            MelonLogger.Msg("5");
                             break;
 
                         case ObjectType.NonCombatFloor:
-                            child.layer = (int)ObjectType.NonCombatFloor; 
+                            parent.transform.GetChild(i).gameObject.layer = (int)ObjectType.NonCombatFloor; 
                             break;
                     }
                 }
