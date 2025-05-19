@@ -20,7 +20,7 @@ namespace TheWastes
         public const string Description = "A huge desolate Island";
         public const string Author = "SisterPankake";
         public const string Company = null;
-        public const string Version = "1.0.5";
+        public const string Version = "1.0.6";
         public const string DownloadLink = null;
     }
 
@@ -70,14 +70,14 @@ namespace TheWastes
         public override void OnMapMatchLoad(bool amHost)
         {
             // Assign SkyBox
-            MelonLogger.Msg("Try with Just skybox = skybox");
+            //MelonLogger.Msg("Try with Just skybox = skybox");
             RenderSettings.skybox = skybox;
             GameObject directionalLight = GameObject.Find("Directional Light");
             if(directionalLight != null)
             {
                 directionalLight.transform.position = sun.transform.position;
                 directionalLight.transform.rotation = sun.transform.rotation;
-                MelonLogger.Msg("Found Directional Light in scene");
+                //MelonLogger.Msg("Found Directional Light in scene");
             }
             else
             {
@@ -115,7 +115,7 @@ namespace TheWastes
 
             if (parent.transform.childCount > 0)
             {
-                MelonLogger.Msg($"Parent: {parent.name} has {parent.transform.childCount} children");
+                //MelonLogger.Msg($"Parent: {parent.name} has {parent.transform.childCount} children");
                 for (int i = 0; i <= parent.transform.childCount - 1; i++)
                 {
                     //MelonLogger.Msg("1");
@@ -141,98 +141,9 @@ namespace TheWastes
                     }
                 }
             }
-            MelonLogger.Msg("Successfully setup layers");
+            //MelonLogger.Msg("Successfully setup layers");
             return;
         }
 
-        // Code for loading custom lightmaps
-        // STOLEN from Orangenal, slightly modified
-        // Not used for now
-        private Texture2D LoadAsset()
-        {
-            if (assetBundle == null)
-            {
-                using (Stream bundleStream = MelonAssembly.Assembly.GetManifestResourceStream("TheWastes.Resources.wastes"))
-                {
-                    if (bundleStream == null)
-                    {
-                        MelonLogger.Error("Failed to find resource stream!");
-                        return null;
-                    }
-
-                    byte[] bundleBytes = new byte[bundleStream.Length];
-                    bundleStream.Read(bundleBytes, 0, bundleBytes.Length);
-                    assetBundle = Il2CppAssetBundleManager.LoadFromMemory(bundleBytes);
-                }
-            }
-
-            if (assetBundle == null)
-            {
-                MelonLogger.Error("AssetBundle failed to load.");
-                return null;
-            }
-
-            Texture2D asset = assetBundle.LoadAsset<Texture2D>("");
-            
-            if (asset == null)
-                MelonLogger.Error("Failed to load lightmap texture from AssetBundle!");
-            else
-                asset.Apply(true, false); // Make sure it's marked readable
-
-            return asset;
-        }
-
-        // STOLEN from Orangenal
-        //IEnumerator SwapLightmap(bool legacy = false)
-        //{
-        //    // Setting immediately on scene change doesn't change the lightmap index??
-        //    yield return new WaitForSeconds(0.2f);
-
-        //    if (!legacy && !wasLightmapChanged)
-        //    {
-        //        lightmap = LoadAsset();
-        //        if (lightmap == null)
-        //        {
-        //            MelonLogger.Error("Lightmap is null!");
-        //            yield break;
-        //        }
-
-        //        // Make a copy of the existing lightmap
-        //        LightmapData[] oldLightmaps = LightmapSettings.lightmaps;
-        //        LightmapData[] newLightmaps = new LightmapData[oldLightmaps.Length + 1];
-        //        for (int i = 0; i < oldLightmaps.Length; i++)
-        //            newLightmaps[i] = oldLightmaps[i];
-
-        //        // Swap in our greyscale lightmap
-        //        LightmapData customLightmapData = new LightmapData
-        //        {
-        //            lightmapColor = lightmap
-        //        };
-        //        newLightmaps[oldLightmaps.Length] = customLightmapData;
-
-        //        LightmapSettings.lightmaps = newLightmaps;
-
-        //        foreach (MeshRenderer r in renderers)
-        //        {
-        //            r.lightmapIndex = newLightmaps.Length - 1;
-        //            r.lightmapScaleOffset = new Vector4(1, 1, 0, 0); // full map
-        //        }
-        //        wasLightmapChanged = true;
-        //    }
-        //    else if (!legacy && wasLightmapChanged) // If we already added our lightmap we don't need to do it again
-        //    {
-        //        foreach (MeshRenderer r in renderers)
-        //        {
-        //            r.lightmapIndex = 2;
-        //        }
-        //    }
-        //    else
-        //    {
-        //        foreach (MeshRenderer r in renderers)
-        //        {
-        //            r.lightmapIndex = 1;
-        //        }
-        //    }
-        //}
     }
 }
